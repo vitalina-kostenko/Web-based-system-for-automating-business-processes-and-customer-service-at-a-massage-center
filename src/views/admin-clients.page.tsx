@@ -15,9 +15,9 @@ export async function AdminClientsPage() {
   }
   // return
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <h1 className="page-title">Клієнти</h1>
-      <ul className="space-y-3">
+      <ul className="grid gap-3 md:grid-cols-2">
         {[...clients.values()].map((client) => (
           <li key={client.email} className="card flex items-center justify-between gap-3">
             <div className="min-w-0">

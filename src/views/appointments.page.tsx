@@ -29,7 +29,7 @@ export async function AppointmentsPage({ scope, tab }: AppointmentsPageProps) {
   });
   // return
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <h1 className="page-title">{isAll ? "Всі записи" : "Мої записи"}</h1>
       <AppointmentTabs
         active={active}

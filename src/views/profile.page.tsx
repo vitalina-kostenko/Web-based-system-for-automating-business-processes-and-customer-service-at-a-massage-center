@@ -9,7 +9,7 @@ export async function ProfilePage() {
   const [row] = await db.select().from(userTable).where(eq(userTable.id, user.id));
   // return
   return (
-    <div className="max-w-xl space-y-6">
+    <div className="mx-auto max-w-xl space-y-6">
       <h1 className="page-title">Профіль</h1>
       {row ? (
         <>
