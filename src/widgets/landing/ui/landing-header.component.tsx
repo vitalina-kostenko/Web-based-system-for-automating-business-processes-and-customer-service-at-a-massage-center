@@ -1,9 +1,12 @@
 import Link from "next/link";
+import { LayoutDashboard } from "lucide-react";
+import { getSessionUser } from "@/shared/lib/auth/session.service";
 import { Logo } from "@/shared/ui";
 import { ThemeToggle } from "@/features/toggle-theme";
 
 // component
-export function LandingHeader() {
+export async function LandingHeader() {
+  const user = await getSessionUser();
   // return
   return (
     <header className="sticky top-0 z-10 border-b border-border bg-bg/80 backdrop-blur">
@@ -13,12 +16,20 @@ export function LandingHeader() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link href="/sign-in" className="btn-ghost hidden sm:inline-flex">
-            Увійти
-          </Link>
-          <Link href="/sign-up" className="btn-primary">
-            Записатись
-          </Link>
+          {user ? (
+            <Link href="/dashboard" className="btn-primary">
+              <LayoutDashboard className="size-4" /> Дашборд
+            </Link>
+          ) : (
+            <>
+              <Link href="/sign-in" className="btn-ghost hidden sm:inline-flex">
+                Увійти
+              </Link>
+              <Link href="/sign-up" className="btn-primary">
+                Записатись
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

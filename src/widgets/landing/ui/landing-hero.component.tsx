@@ -8,7 +8,7 @@ export function LandingHero() {
     <section className="mx-auto max-w-6xl px-4 py-16 text-center sm:py-28">
       <span className="badge bg-soft text-brand">Масажний центр · онлайн-запис 24/7</span>
       <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-semibold tracking-tight sm:text-6xl">
-        Спокій і відновлення — у кілька кліків
+        Спокій і відновлення в кілька кліків
       </h1>
       <p className="mx-auto mt-5 max-w-xl text-muted">
         Оберіть послугу, майстра та зручний час. Ми нагадаємо про візит, а історія ваших записів завжди під рукою.

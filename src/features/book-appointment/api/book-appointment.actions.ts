@@ -7,6 +7,7 @@ import { z } from "zod";
 import { appointments, db, masterServices, services } from "@/shared/lib/db";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { getFreeSlots, listBusyIntervals } from "@/entities/appointment";
+import { getWorkWindow } from "@/entities/master";
 
 const slotsSchema = z.object({
   masterId: z.string().min(1),
@@ -25,7 +26,8 @@ async function resolveSlots(input: z.infer<typeof slotsSchema>) {
   const dayStart = new Date(`${input.date}T00:00:00`);
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60_000);
   const busy = await listBusyIntervals(input.masterId, dayStart, dayEnd);
-  const slots = getFreeSlots({ date: input.date, durationMin: service.durationMin, busy });
+  const window = await getWorkWindow(input.masterId, input.date);
+  const slots = getFreeSlots({ date: input.date, durationMin: service.durationMin, busy, window });
   return { service, slots };
 }
 

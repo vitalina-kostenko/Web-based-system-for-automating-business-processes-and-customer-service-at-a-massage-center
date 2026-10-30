@@ -4,6 +4,8 @@ import type { AppointmentView } from "../model/appointment.types";
 
 const selection = {
   id: appointments.id,
+  serviceId: appointments.serviceId,
+  masterId: appointments.masterId,
   clientName: appointments.clientName,
   clientEmail: appointments.clientEmail,
   serviceName: services.name,
@@ -24,7 +26,7 @@ export async function listAppointments(userId?: string): Promise<AppointmentView
   return rows.orderBy(desc(appointments.startsAt));
 }
 
-export async function listBusyIntervals(masterId: string, dayStart: Date, dayEnd: Date) {
+export async function listBusyIntervals(masterId: string, dayStart: Date, dayEnd: Date, excludeId?: string) {
   const rows = await db
     .select({ start: appointments.startsAt, end: appointments.endsAt })
     .from(appointments)
@@ -34,6 +36,7 @@ export async function listBusyIntervals(masterId: string, dayStart: Date, dayEnd
         ne(appointments.status, "cancelled"),
         gte(appointments.startsAt, dayStart),
         lt(appointments.startsAt, dayEnd),
+        excludeId ? ne(appointments.id, excludeId) : undefined,
       ),
     );
   return rows;

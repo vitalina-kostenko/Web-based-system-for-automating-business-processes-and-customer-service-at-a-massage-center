@@ -3,6 +3,7 @@ import { listAppointments } from "@/entities/appointment";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { formatPrice } from "@/shared/lib/format.util";
 import { AppointmentsList } from "@/widgets/appointments-list";
+import { NextVisit } from "@/widgets/next-visit";
 import { RevenueChart } from "@/widgets/revenue-chart";
 import { StatsGrid } from "@/widgets/stats-grid";
 
@@ -12,7 +13,7 @@ export async function DashboardPage() {
   const isAdmin = user.role === "admin";
   const items = await listAppointments(isAdmin ? undefined : user.id);
   const now = new Date();
-  const upcoming = items.filter((i) => i.startsAt > now && i.status !== "cancelled");
+  const upcoming = items.filter((i) => i.startsAt > now && i.status !== "cancelled").reverse();
   const completed = items.filter((i) => i.status === "completed");
   const revenue = completed.reduce((sum, i) => sum + i.price, 0);
 
@@ -37,6 +38,7 @@ export async function DashboardPage() {
           { label: isAdmin ? "Дохід" : "Витрачено", value: formatPrice(revenue), icon: Wallet },
         ]}
       />
+      {!isAdmin && <NextVisit appointment={upcoming[0]} />}
       {isAdmin && <RevenueChart data={days} />}
       <section className="space-y-3">
         <h2 className="font-semibold">Найближчі записи</h2>

@@ -3,7 +3,7 @@ import { CalendarClock, ShieldCheck, UserRound } from "lucide-react";
 // interface
 const features = [
   { icon: CalendarClock, title: "Розумний запис", text: "Система сама показує лише вільні слоти з урахуванням тривалості процедури." },
-  { icon: UserRound, title: "Особистий кабінет", text: "Історія візитів, статуси та скасування — окремо для кожного клієнта." },
+  { icon: UserRound, title: "Особистий кабінет", text: "Історія візитів, статуси та скасування окремо для кожного клієнта." },
   { icon: ShieldCheck, title: "Безпека даних", text: "Захищена авторизація, ролі доступу та перевірка всіх дій на сервері." },
 ];
 
