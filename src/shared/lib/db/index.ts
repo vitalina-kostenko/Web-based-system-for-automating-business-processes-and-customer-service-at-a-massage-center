@@ -1,8 +1,11 @@
-import { createClient } from "@libsql/client";
-import { drizzle } from "drizzle-orm/libsql";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 import * as schema from "./db.schema";
 
-const client = createClient({ url: process.env.DATABASE_URL ?? "file:local.db" });
+const globalForDb = globalThis as unknown as { pool?: Pool };
 
-export const db = drizzle(client, { schema });
+const pool = globalForDb.pool ?? new Pool({ connectionString: process.env.DATABASE_URL, max: 10 });
+if (process.env.NODE_ENV !== "production") globalForDb.pool = pool;
+
+export const db = drizzle(pool, { schema });
 export * from "./db.schema";

@@ -1,12 +1,12 @@
 # Calma — вебсистема масажного центру
 
 Кваліфікаційна робота: автоматизація бізнес-процесів та обслуговування клієнтів масажного центру.
-Next.js · TypeScript · Tailwind · Drizzle (libSQL) · Better Auth · Clerk · FSD.
+Next.js · TypeScript · Tailwind · Drizzle + Neon Postgres · Better Auth · Clerk · FSD.
 
 ## Запуск
 ```bash
 npm install
-cp .env.example .env.local   # вказати BETTER_AUTH_SECRET
+neon deploy                  # створює .env.local зі змінними Neon
 npm run db:push
 npm run db:seed
 npm run dev
