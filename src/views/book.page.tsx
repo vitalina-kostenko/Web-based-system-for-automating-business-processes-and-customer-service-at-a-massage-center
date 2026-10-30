@@ -1,12 +1,20 @@
+import { getMasterRatings } from "@/entities/review";
 import { listMastersWithServices, listServices } from "@/entities/service";
 import { BookingForm } from "@/features/book-appointment";
 
 // page
 export async function BookPage() {
-  const [services, links] = await Promise.all([listServices(), listMastersWithServices()]);
-  const masters: Record<string, { id: string; name: string; specialty: string }[]> = {};
+  const [services, links, ratings] = await Promise.all([
+    listServices(),
+    listMastersWithServices(),
+    getMasterRatings(),
+  ]);
+  const masters: Record<string, { id: string; name: string; specialty: string; rating?: string }[]> = {};
   for (const { serviceId, master } of links) {
-    if (master.active) (masters[serviceId] ??= []).push(master);
+    const rating = ratings.get(master.id);
+    if (master.active) {
+      (masters[serviceId] ??= []).push({ ...master, rating: rating?.average.toFixed(1) });
+    }
   }
   // return
   return (

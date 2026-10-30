@@ -1,5 +1,6 @@
 import { StatusBadge, type AppointmentView } from "@/entities/appointment";
 import { StatusActions } from "@/features/manage-appointment";
+import { ReviewForm } from "@/features/leave-review";
 import { ReschedulePanel } from "@/features/reschedule-appointment";
 import { formatDateTime, formatPrice } from "@/shared/lib/format.util";
 
@@ -7,10 +8,11 @@ import { formatDateTime, formatPrice } from "@/shared/lib/format.util";
 type AppointmentsListProps = {
   items: AppointmentView[];
   isAdmin?: boolean;
+  reviewedIds?: string[];
 };
 
 // component
-export function AppointmentsList({ items, isAdmin = false }: AppointmentsListProps) {
+export function AppointmentsList({ items, isAdmin = false, reviewedIds = [] }: AppointmentsListProps) {
   const now = new Date();
   if (items.length === 0) {
     return <p className="card text-center text-sm text-muted">Записів поки немає</p>;
@@ -39,6 +41,9 @@ export function AppointmentsList({ items, isAdmin = false }: AppointmentsListPro
               </div>
             </div>
             {canReschedule && <ReschedulePanel id={item.id} />}
+            {!isAdmin && item.status === "completed" && !reviewedIds.includes(item.id) && (
+              <ReviewForm appointmentId={item.id} />
+            )}
           </li>
         );
       })}
