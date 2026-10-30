@@ -9,6 +9,7 @@ import { requireUser } from "@/shared/lib/auth/session.service";
 import { getFreeSlots, listBusyIntervals } from "@/entities/appointment";
 import { applyDiscount, getUserLoyalty } from "@/entities/loyalty";
 import { getWorkWindow } from "@/entities/master";
+import { notify } from "@/entities/notification";
 import { applyPromo, checkPromo, findPromoByCode } from "@/entities/promo";
 
 const slotsSchema = z.object({
@@ -106,6 +107,7 @@ export async function createAppointmentAction(input: z.infer<typeof bookingSchem
     promoCode: usedPromo,
     notes,
   });
+  await notify(user.id, "Запис створено", "Очікуйте підтвердження від адміністратора.");
   revalidatePath("/dashboard", "layout");
   return { ok: true };
 }

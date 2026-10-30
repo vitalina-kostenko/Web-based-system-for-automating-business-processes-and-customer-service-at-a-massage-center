@@ -4,6 +4,7 @@ import type { SessionUser } from "@/shared/lib/auth/session.service";
 import { Logo } from "@/shared/ui";
 import { SignOutButton } from "@/features/auth";
 import { ThemeToggle } from "@/features/toggle-theme";
+import { NotificationBell } from "@/widgets/notification-bell";
 import { SidebarNav } from "./sidebar-nav.component";
 
 // interface
@@ -33,6 +34,7 @@ export function AppShell({ user, children }: AppShellProps) {
             {user.name} · {isAdmin ? "Адміністратор" : "Клієнт"}
           </div>
           <div className="flex items-center gap-1">
+            <NotificationBell userId={user.id} />
             <ThemeToggle />
             <SignOutButton />
           </div>

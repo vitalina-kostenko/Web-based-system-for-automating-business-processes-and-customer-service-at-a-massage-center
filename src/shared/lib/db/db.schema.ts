@@ -110,6 +110,25 @@ export const appointments = pgTable("appointments", {
   createdAt: createdAt(),
 });
 
+export const notifications = pgTable("notifications", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  title: text("title").notNull(),
+  body: text("body").notNull().default(""),
+  read: boolean("read").notNull().default(false),
+  createdAt: createdAt(),
+});
+
+export const waitlist = pgTable("waitlist", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  serviceId: text("service_id").notNull().references(() => services.id, { onDelete: "cascade" }),
+  masterId: text("master_id").notNull().references(() => masters.id, { onDelete: "cascade" }),
+  date: text("date").notNull(),
+  notified: boolean("notified").notNull().default(false),
+  createdAt: createdAt(),
+});
+
 export const promoCodes = pgTable("promo_codes", {
   id: text("id").primaryKey(),
   code: text("code").notNull().unique(),
