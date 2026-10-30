@@ -105,7 +105,20 @@ export const appointments = pgTable("appointments", {
     .default("pending"),
   price: integer("price").notNull(),
   discountPercent: integer("discount_percent").notNull().default(0),
+  promoCode: text("promo_code"),
   notes: text("notes"),
+  createdAt: createdAt(),
+});
+
+export const promoCodes = pgTable("promo_codes", {
+  id: text("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  kind: text("kind", { enum: ["percent", "fixed"] }).notNull(),
+  value: integer("value").notNull(),
+  expiresAt: timestamp("expires_at", { mode: "date" }),
+  maxUses: integer("max_uses"),
+  usedCount: integer("used_count").notNull().default(0),
+  active: boolean("active").notNull().default(true),
   createdAt: createdAt(),
 });
 

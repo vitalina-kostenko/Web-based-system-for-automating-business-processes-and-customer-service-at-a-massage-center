@@ -1,14 +1,15 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { eq, and } from "drizzle-orm";
+import { and, eq, isNull, or, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { appointments, db, masterServices, services } from "@/shared/lib/db";
+import { appointments, db, masterServices, promoCodes, services } from "@/shared/lib/db";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { getFreeSlots, listBusyIntervals } from "@/entities/appointment";
 import { applyDiscount, getUserLoyalty } from "@/entities/loyalty";
 import { getWorkWindow } from "@/entities/master";
+import { applyPromo, checkPromo, findPromoByCode } from "@/entities/promo";
 
 const slotsSchema = z.object({
   masterId: z.string().min(1),
@@ -19,6 +20,7 @@ const slotsSchema = z.object({
 const bookingSchema = slotsSchema.extend({
   startsAt: z.string().datetime(),
   notes: z.string().max(300).optional(),
+  promoCode: z.string().max(20).optional(),
 });
 
 async function resolveSlots(input: z.infer<typeof slotsSchema>) {
@@ -40,12 +42,23 @@ export async function getSlotsAction(input: z.infer<typeof slotsSchema>) {
   return slots.map((slot) => slot.toISOString());
 }
 
+export async function previewPromoAction(input: { code: string; serviceId: string }) {
+  const user = await requireUser();
+  const promo = await findPromoByCode(input.code);
+  const check = checkPromo(promo);
+  if (!promo || !check.ok) return { ok: false, error: check.ok ? "Промокод не знайдено" : check.error };
+  const [service] = await db.select().from(services).where(eq(services.id, input.serviceId));
+  if (!service) return { ok: false, error: "Оберіть послугу" };
+  const { discountPercent } = await getUserLoyalty(user.id);
+  return { ok: true, finalPrice: applyPromo(applyDiscount(service.price, discountPercent), promo) };
+}
+
 export async function createAppointmentAction(input: z.infer<typeof bookingSchema>) {
   const user = await requireUser();
   const parsed = bookingSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "Некоректні дані запису" };
 
-  const { masterId, serviceId, startsAt, notes } = parsed.data;
+  const { masterId, serviceId, startsAt, notes, promoCode } = parsed.data;
   const [link] = await db
     .select()
     .from(masterServices)
@@ -59,6 +72,26 @@ export async function createAppointmentAction(input: z.infer<typeof bookingSchem
   }
 
   const { discountPercent } = await getUserLoyalty(user.id);
+  let price = applyDiscount(service.price, discountPercent);
+  let usedPromo: string | undefined;
+  if (promoCode) {
+    const promo = await findPromoByCode(promoCode);
+    const check = checkPromo(promo);
+    if (!promo || !check.ok) return { ok: false, error: check.ok ? "Промокод не знайдено" : check.error };
+    const [claimed] = await db
+      .update(promoCodes)
+      .set({ usedCount: sql`${promoCodes.usedCount} + 1` })
+      .where(
+        and(
+          eq(promoCodes.id, promo.id),
+          or(isNull(promoCodes.maxUses), sql`${promoCodes.usedCount} < ${promoCodes.maxUses}`),
+        ),
+      )
+      .returning({ id: promoCodes.id });
+    if (!claimed) return { ok: false, error: "Ліміт використань вичерпано" };
+    price = applyPromo(price, promo);
+    usedPromo = promo.code;
+  }
   await db.insert(appointments).values({
     id: randomUUID(),
     userId: user.id,
@@ -68,8 +101,9 @@ export async function createAppointmentAction(input: z.infer<typeof bookingSchem
     masterId,
     startsAt: start,
     endsAt: new Date(start.getTime() + service.durationMin * 60_000),
-    price: applyDiscount(service.price, discountPercent),
+    price,
     discountPercent,
+    promoCode: usedPromo,
     notes,
   });
   revalidatePath("/dashboard", "layout");
