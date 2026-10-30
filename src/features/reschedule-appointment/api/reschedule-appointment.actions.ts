@@ -7,6 +7,8 @@ import { appointments, db, services } from "@/shared/lib/db";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { getFreeSlots, listBusyIntervals } from "@/entities/appointment";
 import { getWorkWindow } from "@/entities/master";
+import { notify } from "@/entities/notification";
+import { notifyWaitlist } from "@/entities/waitlist";
 
 const slotsSchema = z.object({
   id: z.string().min(1),
@@ -58,6 +60,8 @@ export async function rescheduleAppointmentAction(input: z.infer<typeof reschedu
     .update(appointments)
     .set({ startsAt: start, endsAt: new Date(start.getTime() + service.durationMin * 60_000), status: "pending" })
     .where(and(eq(appointments.id, appointment.id)));
+  await notifyWaitlist(appointment.masterId, appointment.startsAt);
+  await notify(appointment.userId, "Запис перенесено", "Новий час очікує підтвердження.");
   revalidatePath("/dashboard", "layout");
   return { ok: true };
 }

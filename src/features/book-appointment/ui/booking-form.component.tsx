@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/shared/lib/format.util";
 import { createAppointmentAction, getSlotsAction, previewPromoAction } from "../api/book-appointment.actions";
+import { WaitlistButton } from "@/features/join-waitlist";
 import { PromoInput } from "./promo-input.component";
 import { BookingSummary } from "./booking-summary.component";
 import { OptionList } from "./option-list.component";
@@ -25,6 +26,7 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
   const [date, setDate] = useState(today);
   const [slots, setSlots] = useState<string[]>([]);
   const [slot, setSlot] = useState("");
+  const [loadedKey, setLoadedKey] = useState("");
   const [notes, setNotes] = useState("");
   const [promo, setPromo] = useState("");
   const [promoPrice, setPromoPrice] = useState<number>();
@@ -38,7 +40,9 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
     if (!serviceId || !masterId) return;
     let active = true;
     getSlotsAction({ serviceId, masterId, date }).then((result) => {
-      if (active) setSlots(result);
+      if (!active) return;
+      setSlots(result);
+      setLoadedKey(`${serviceId}|${masterId}|${date}`);
     });
     return () => {
       active = false;
@@ -120,6 +124,9 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
               className="input max-w-48"
             />
             <SlotGrid slots={slots} value={slot} onChange={setSlot} />
+            {loadedKey === `${serviceId}|${masterId}|${date}` && slots.length === 0 && (
+              <WaitlistButton serviceId={serviceId} masterId={masterId} date={date} />
+            )}
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
