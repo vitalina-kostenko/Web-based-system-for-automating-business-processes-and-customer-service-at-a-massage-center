@@ -28,7 +28,7 @@ export function ScheduleForm({ masterId, schedule }: ScheduleFormProps) {
                 {days[weekday]}
               </label>
               <input type="time" name={`start${weekday}`} defaultValue={toTime(row?.startMin ?? 540)} className="input w-28" />
-              <span className="text-muted">—</span>
+              <span className="text-muted">до</span>
               <input type="time" name={`end${weekday}`} defaultValue={toTime(row?.endMin ?? 1080)} className="input w-28" />
             </div>
           );
