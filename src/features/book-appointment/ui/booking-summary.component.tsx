@@ -25,13 +25,13 @@ export function BookingSummary({ service, masterName, slot, children }: BookingS
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-3">
             <dt className="text-muted">{label}</dt>
-            <dd className="text-right font-medium">{value || "—"}</dd>
+            <dd className="text-right font-medium">{value || "Не обрано"}</dd>
           </div>
         ))}
       </dl>
       <div className="flex items-center justify-between border-t border-border pt-3">
         <span className="text-muted">До сплати</span>
-        <span className="text-xl font-semibold">{service ? formatPrice(service.price) : "—"}</span>
+        <span className="text-xl font-semibold">{service ? formatPrice(service.price) : formatPrice(0)}</span>
       </div>
       {children}
     </aside>
