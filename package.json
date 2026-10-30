@@ -9,7 +9,7 @@
     "lint": "eslint",
     "db:push": "node --env-file=.env.local ./node_modules/drizzle-kit/bin.cjs push --force",
     "db:seed": "tsx --env-file=.env.local scripts/seed.ts",
-    "test": "tsx --test scripts/slots.test.ts scripts/analytics.test.ts"
+    "test": "tsx --test scripts/slots.test.ts scripts/analytics.test.ts scripts/loyalty.test.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.22",

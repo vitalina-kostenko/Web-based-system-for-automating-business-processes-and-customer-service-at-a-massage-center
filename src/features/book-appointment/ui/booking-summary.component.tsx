@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
+import { applyDiscount } from "@/entities/loyalty/lib/loyalty.util";
 import { formatDateTime, formatPrice } from "@/shared/lib/format.util";
 
 // interface
 type BookingSummaryProps = {
+  discountPercent?: number;
   service?: { name: string; durationMin: number; price: number };
   masterName?: string;
   slot: string;
@@ -10,12 +12,13 @@ type BookingSummaryProps = {
 };
 
 // component
-export function BookingSummary({ service, masterName, slot, children }: BookingSummaryProps) {
+export function BookingSummary({ service, masterName, slot, discountPercent = 0, children }: BookingSummaryProps) {
   const rows = [
     ["Послуга", service?.name],
     ["Тривалість", service && `${service.durationMin} хв`],
     ["Майстер", masterName],
     ["Час", slot && formatDateTime(new Date(slot))],
+    ["Знижка лояльності", `${discountPercent}%`],
   ];
   // return
   return (
@@ -31,7 +34,7 @@ export function BookingSummary({ service, masterName, slot, children }: BookingS
       </dl>
       <div className="flex items-center justify-between border-t border-border pt-3">
         <span className="text-muted">До сплати</span>
-        <span className="text-xl font-semibold">{service ? formatPrice(service.price) : formatPrice(0)}</span>
+        <span className="text-xl font-semibold">{service ? formatPrice(applyDiscount(service.price, discountPercent)) : formatPrice(0)}</span>
       </div>
       {children}
     </aside>
