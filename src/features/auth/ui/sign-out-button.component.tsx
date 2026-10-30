@@ -16,7 +16,7 @@ export function SignOutButton() {
 
   // return
   return (
-    <button type="button" aria-label="Р’РёР№С‚Рё" className="btn-ghost size-10 px-0" onClick={onClick}>
+    <button type="button" aria-label="Вийти" className="btn-ghost size-10 px-0" onClick={onClick}>
       <LogOut className="size-5" />
     </button>
   );

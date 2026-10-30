@@ -14,7 +14,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
       <h2 className="font-semibold">Дохід за 7 днів</h2>
       <div className="flex h-40 items-end gap-2">
         {data.map((d) => (
-          <div key={d.label} className="flex flex-1 flex-col items-center gap-1" title={formatPrice(d.value)}>
+          <div key={d.label} className="flex h-full flex-1 flex-col items-center justify-end gap-1" title={formatPrice(d.value)}>
             <div
               className="w-full rounded-t-lg bg-brand/80"
               style={{ height: `${Math.max((d.value / max) * 100, 3)}%` }}

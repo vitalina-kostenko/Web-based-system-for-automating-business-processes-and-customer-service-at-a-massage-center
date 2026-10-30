@@ -24,7 +24,7 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   const clerkUser = await currentUser();
   return {
     id: `clerk_${userId}`,
-    name: clerkUser?.fullName ?? clerkUser?.username ?? "РљР»С–С”РЅС‚",
+    name: clerkUser?.fullName ?? clerkUser?.username ?? "Клієнт",
     email: clerkUser?.primaryEmailAddress?.emailAddress ?? "",
     role: "client",
   };
