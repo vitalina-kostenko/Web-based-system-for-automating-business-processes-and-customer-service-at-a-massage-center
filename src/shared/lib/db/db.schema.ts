@@ -1,33 +1,35 @@
 import { relations } from "drizzle-orm";
-import { integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { boolean, integer, pgTable, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
-const timestamps = {
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
-};
+const createdAt = () =>
+  timestamp("created_at", { mode: "date" }).notNull().$defaultFn(() => new Date());
+const updatedAt = () =>
+  timestamp("updated_at", { mode: "date" }).notNull().$defaultFn(() => new Date());
 
-export const user = sqliteTable("user", {
+export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-  emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
+  emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
   phone: text("phone"),
   role: text("role", { enum: ["client", "admin"] }).notNull().default("client"),
-  ...timestamps,
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
 });
 
-export const session = sqliteTable("session", {
+export const session = pgTable("session", {
   id: text("id").primaryKey(),
   token: text("token").notNull().unique(),
-  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
   ipAddress: text("ip_address"),
   userAgent: text("user_agent"),
   userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
-  ...timestamps,
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
 });
 
-export const account = sqliteTable("account", {
+export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
@@ -35,39 +37,41 @@ export const account = sqliteTable("account", {
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
-  accessTokenExpiresAt: integer("access_token_expires_at", { mode: "timestamp" }),
-  refreshTokenExpiresAt: integer("refresh_token_expires_at", { mode: "timestamp" }),
+  accessTokenExpiresAt: timestamp("access_token_expires_at", { mode: "date" }),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at", { mode: "date" }),
   scope: text("scope"),
   password: text("password"),
-  ...timestamps,
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
 });
 
-export const verification = sqliteTable("verification", {
+export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
-  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
-  ...timestamps,
+  expiresAt: timestamp("expires_at", { mode: "date" }).notNull(),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
 });
 
-export const services = sqliteTable("services", {
+export const services = pgTable("services", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
   category: text("category").notNull().default("Класичний"),
   durationMin: integer("duration_min").notNull(),
   price: integer("price").notNull(),
-  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  active: boolean("active").notNull().default(true),
 });
 
-export const masters = sqliteTable("masters", {
+export const masters = pgTable("masters", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   specialty: text("specialty").notNull(),
-  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  active: boolean("active").notNull().default(true),
 });
 
-export const masterServices = sqliteTable(
+export const masterServices = pgTable(
   "master_services",
   {
     masterId: text("master_id").notNull().references(() => masters.id, { onDelete: "cascade" }),
@@ -76,7 +80,7 @@ export const masterServices = sqliteTable(
   (t) => [primaryKey({ columns: [t.masterId, t.serviceId] })],
 );
 
-export const masterSchedules = sqliteTable(
+export const masterSchedules = pgTable(
   "master_schedules",
   {
     masterId: text("master_id").notNull().references(() => masters.id, { onDelete: "cascade" }),
@@ -87,31 +91,31 @@ export const masterSchedules = sqliteTable(
   (t) => [primaryKey({ columns: [t.masterId, t.weekday] })],
 );
 
-export const appointments = sqliteTable("appointments", {
+export const appointments = pgTable("appointments", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),
   clientName: text("client_name").notNull(),
   clientEmail: text("client_email").notNull(),
   serviceId: text("service_id").notNull().references(() => services.id),
   masterId: text("master_id").notNull().references(() => masters.id),
-  startsAt: integer("starts_at", { mode: "timestamp" }).notNull(),
-  endsAt: integer("ends_at", { mode: "timestamp" }).notNull(),
+  startsAt: timestamp("starts_at", { mode: "date" }).notNull(),
+  endsAt: timestamp("ends_at", { mode: "date" }).notNull(),
   status: text("status", { enum: ["pending", "confirmed", "completed", "cancelled"] })
     .notNull()
     .default("pending"),
   price: integer("price").notNull(),
   notes: text("notes"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  createdAt: createdAt(),
 });
 
-export const reviews = sqliteTable("reviews", {
+export const reviews = pgTable("reviews", {
   id: text("id").primaryKey(),
   appointmentId: text("appointment_id").notNull().unique().references(() => appointments.id, { onDelete: "cascade" }),
   userId: text("user_id").notNull(),
   masterId: text("master_id").notNull().references(() => masters.id),
   rating: integer("rating").notNull(),
   comment: text("comment"),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  createdAt: createdAt(),
 });
 
 export const appointmentRelations = relations(appointments, ({ one }) => ({

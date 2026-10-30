@@ -1,4 +1,4 @@
-# База даних (SQLite / libSQL + Drizzle ORM)
+# База даних (Neon Postgres + Drizzle ORM)
 
 Схема: `src/shared/lib/db/db.schema.ts`. Застосування: `npm run db:push`. Дані: `npm run db:seed`.
 
