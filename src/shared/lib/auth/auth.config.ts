@@ -10,6 +10,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: { type: "string", defaultValue: "client", input: false },
+      phone: { type: "string", required: false },
     },
   },
   session: { expiresIn: 60 * 60 * 24 * 7 },

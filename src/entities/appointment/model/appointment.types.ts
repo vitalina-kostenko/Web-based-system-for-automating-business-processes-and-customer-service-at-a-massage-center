@@ -2,6 +2,8 @@ export type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancell
 
 export type AppointmentView = {
   id: string;
+  serviceId: string;
+  masterId: string;
   clientName: string;
   clientEmail: string;
   serviceName: string;

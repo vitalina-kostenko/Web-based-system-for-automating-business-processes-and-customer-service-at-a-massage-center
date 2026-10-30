@@ -4,13 +4,14 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/shared/lib/format.util";
 import { createAppointmentAction, getSlotsAction } from "../api/book-appointment.actions";
+import { BookingSummary } from "./booking-summary.component";
 import { OptionList } from "./option-list.component";
 import { SlotGrid } from "./slot-grid.component";
 
 // interface
 type BookingFormProps = {
   services: { id: string; name: string; durationMin: number; price: number }[];
-  masters: Record<string, { id: string; name: string; specialty: string }[]>;
+  masters: Record<string, { id: string; name: string; specialty: string; rating?: string }[]>;
 };
 
 // component
@@ -25,6 +26,8 @@ export function BookingForm({ services, masters }: BookingFormProps) {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
+  const service = services.find((s) => s.id === serviceId);
+  const master = (masters[serviceId] ?? []).find((m) => m.id === masterId);
 
   useEffect(() => {
     if (!serviceId || !masterId) return;
@@ -48,66 +51,70 @@ export function BookingForm({ services, masters }: BookingFormProps) {
 
   // return
   return (
-    <div className="space-y-6">
-      <section className="card space-y-3">
-        <h2 className="font-semibold">1. Послуга</h2>
-        <OptionList
-          value={serviceId}
-          onChange={(id) => {
-            setServiceId(id);
-            setMasterId("");
-            setSlots([]);
-            setSlot("");
-          }}
-          options={services.map((s) => ({
-            id: s.id,
-            title: s.name,
-            hint: `${s.durationMin} хв · ${formatPrice(s.price)}`,
-          }))}
-        />
-      </section>
-      {serviceId && (
+    <div className="grid gap-6 lg:grid-cols-[1fr_320px] lg:items-start">
+      <div className="space-y-6">
         <section className="card space-y-3">
-          <h2 className="font-semibold">2. Майстер</h2>
+          <h2 className="font-semibold">1. Послуга</h2>
           <OptionList
-            value={masterId}
+            value={serviceId}
             onChange={(id) => {
-              setMasterId(id);
-              setSlot("");
+              setServiceId(id);
+              setMasterId("");
               setSlots([]);
+              setSlot("");
             }}
-            options={(masters[serviceId] ?? []).map((m) => ({ id: m.id, title: m.name, hint: m.specialty }))}
+            options={services.map((s) => ({
+              id: s.id,
+              title: s.name,
+              hint: `${s.durationMin} хв · ${formatPrice(s.price)}`,
+            }))}
           />
         </section>
-      )}
-      {masterId && (
-        <section className="card space-y-3">
-          <h2 className="font-semibold">3. Дата і час</h2>
-          <input
-            type="date"
-            min={today}
-            value={date}
-            onChange={(e) => {
-              setDate(e.target.value);
-              setSlot("");
-              setSlots([]);
-            }}
-            className="input max-w-48"
-          />
-          <SlotGrid slots={slots} value={slot} onChange={setSlot} />
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            maxLength={300}
-            placeholder="Побажання (необов'язково)"
-            className="input h-24 py-2"
-          />
-        </section>
-      )}
-      {error && <p className="text-sm text-danger">{error}</p>}
-      <button className="btn-primary w-full sm:w-auto" disabled={!slot || pending} onClick={submit}>
-        Записатись
-      </button>
+        {serviceId && (
+          <section className="card space-y-3">
+            <h2 className="font-semibold">2. Майстер</h2>
+            <OptionList
+              value={masterId}
+              onChange={(id) => {
+                setMasterId(id);
+                setSlot("");
+                setSlots([]);
+              }}
+              options={(masters[serviceId] ?? []).map((m) => ({ id: m.id, title: m.name, hint: m.rating ? `${m.specialty} · ★ ${m.rating}` : m.specialty }))}
+            />
+          </section>
+        )}
+        {masterId && (
+          <section className="card space-y-3">
+            <h2 className="font-semibold">3. Дата і час</h2>
+            <input
+              type="date"
+              min={today}
+              value={date}
+              onChange={(e) => {
+                setDate(e.target.value);
+                setSlot("");
+                setSlots([]);
+              }}
+              className="input max-w-48"
+            />
+            <SlotGrid slots={slots} value={slot} onChange={setSlot} />
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              maxLength={300}
+              placeholder="Побажання (необов'язково)"
+              className="input h-24 py-2"
+            />
+          </section>
+        )}
+      </div>
+      <BookingSummary service={service} masterName={master?.name} slot={slot}>
+        {error && <p className="text-sm text-danger">{error}</p>}
+        <button className="btn-primary w-full" disabled={!slot || pending} onClick={submit}>
+          Записатись
+        </button>
+      </BookingSummary>
     </div>
   );
 }

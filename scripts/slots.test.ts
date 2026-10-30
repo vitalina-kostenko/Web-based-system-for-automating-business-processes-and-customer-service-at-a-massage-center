@@ -19,6 +19,15 @@ test("busy interval blocks overlapping slots", () => {
   assert.ok(times.includes(at(11).getTime()));
 });
 
+test("day off returns no slots", () => {
+  assert.equal(getFreeSlots({ date: day, durationMin: 60, busy: [], window: null }).length, 0);
+});
+
+test("master window limits slots", () => {
+  const slots = getFreeSlots({ date: day, durationMin: 60, busy: [], window: { startMin: 600, endMin: 720 } });
+  assert.deepEqual(slots.map((s) => s.getTime()), [at(10).getTime(), at(10, 30).getTime(), at(11).getTime()]);
+});
+
 test("overlaps detects touching intervals as free", () => {
   assert.equal(overlaps(at(9), at(10), at(10), at(11)), false);
   assert.equal(overlaps(at(9), at(10, 30), at(10), at(11)), true);
