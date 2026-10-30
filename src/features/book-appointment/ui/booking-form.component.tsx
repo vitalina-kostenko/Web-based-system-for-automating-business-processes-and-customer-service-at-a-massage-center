@@ -11,7 +11,7 @@ import { SlotGrid } from "./slot-grid.component";
 // interface
 type BookingFormProps = {
   services: { id: string; name: string; durationMin: number; price: number }[];
-  masters: Record<string, { id: string; name: string; specialty: string }[]>;
+  masters: Record<string, { id: string; name: string; specialty: string; rating?: string }[]>;
 };
 
 // component
@@ -80,7 +80,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
                 setSlot("");
                 setSlots([]);
               }}
-              options={(masters[serviceId] ?? []).map((m) => ({ id: m.id, title: m.name, hint: m.specialty }))}
+              options={(masters[serviceId] ?? []).map((m) => ({ id: m.id, title: m.name, hint: m.rating ? `${m.specialty} · ★ ${m.rating}` : m.specialty }))}
             />
           </section>
         )}

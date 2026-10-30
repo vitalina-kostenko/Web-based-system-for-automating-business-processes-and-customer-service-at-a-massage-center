@@ -103,6 +103,16 @@ export const appointments = sqliteTable("appointments", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
+export const reviews = sqliteTable("reviews", {
+  id: text("id").primaryKey(),
+  appointmentId: text("appointment_id").notNull().unique().references(() => appointments.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
+  masterId: text("master_id").notNull().references(() => masters.id),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
 export const appointmentRelations = relations(appointments, ({ one }) => ({
   service: one(services, { fields: [appointments.serviceId], references: [services.id] }),
   master: one(masters, { fields: [appointments.masterId], references: [masters.id] }),
