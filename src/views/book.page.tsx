@@ -10,7 +10,7 @@ export async function BookPage() {
   }
   // return
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <h1 className="page-title">Запис на масаж</h1>
       <BookingForm services={services} masters={masters} />
     </div>
