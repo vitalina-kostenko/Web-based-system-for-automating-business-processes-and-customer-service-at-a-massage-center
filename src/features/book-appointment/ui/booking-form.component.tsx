@@ -41,7 +41,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
     setError("");
     startTransition(async () => {
       const result = await createAppointmentAction({ serviceId, masterId, date, startsAt: slot, notes });
-      if (!result.ok) return setError(result.error ?? "РџРѕРјРёР»РєР°");
+      if (!result.ok) return setError(result.error ?? "Помилка");
       router.push("/dashboard/appointments");
     });
   }
@@ -50,7 +50,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
   return (
     <div className="space-y-6">
       <section className="card space-y-3">
-        <h2 className="font-semibold">1. РџРѕСЃР»СѓРіР°</h2>
+        <h2 className="font-semibold">1. Послуга</h2>
         <OptionList
           value={serviceId}
           onChange={(id) => {
@@ -62,13 +62,13 @@ export function BookingForm({ services, masters }: BookingFormProps) {
           options={services.map((s) => ({
             id: s.id,
             title: s.name,
-            hint: `${s.durationMin} С…РІ В· ${formatPrice(s.price)}`,
+            hint: `${s.durationMin} хв · ${formatPrice(s.price)}`,
           }))}
         />
       </section>
       {serviceId && (
         <section className="card space-y-3">
-          <h2 className="font-semibold">2. РњР°Р№СЃС‚РµСЂ</h2>
+          <h2 className="font-semibold">2. Майстер</h2>
           <OptionList
             value={masterId}
             onChange={(id) => {
@@ -82,7 +82,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
       )}
       {masterId && (
         <section className="card space-y-3">
-          <h2 className="font-semibold">3. Р”Р°С‚Р° С– С‡Р°СЃ</h2>
+          <h2 className="font-semibold">3. Дата і час</h2>
           <input
             type="date"
             min={today}
@@ -99,14 +99,14 @@ export function BookingForm({ services, masters }: BookingFormProps) {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             maxLength={300}
-            placeholder="РџРѕР±Р°Р¶Р°РЅРЅСЏ (РЅРµРѕР±РѕРІ'СЏР·РєРѕРІРѕ)"
+            placeholder="Побажання (необов'язково)"
             className="input h-24 py-2"
           />
         </section>
       )}
       {error && <p className="text-sm text-danger">{error}</p>}
       <button className="btn-primary w-full sm:w-auto" disabled={!slot || pending} onClick={submit}>
-        Р—Р°РїРёСЃР°С‚РёСЃСЊ
+        Записатись
       </button>
     </div>
   );

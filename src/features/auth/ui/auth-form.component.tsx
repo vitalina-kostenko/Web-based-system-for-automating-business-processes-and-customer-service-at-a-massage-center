@@ -29,7 +29,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       : await authClient.signIn.email({ email, password });
     setPending(false);
     if (result.error) {
-      setError(result.error.message ?? "РџРѕРјРёР»РєР° Р°РІС‚РѕСЂРёР·Р°С†С–С—");
+      setError(result.error.message ?? "Помилка авторизації");
       return;
     }
     router.push("/dashboard");
@@ -39,10 +39,10 @@ export function AuthForm({ mode }: AuthFormProps) {
   // return
   return (
     <form onSubmit={onSubmit} className="space-y-4">
-      {isSignUp && <Field label="Р†Рј'СЏ" name="name" required minLength={2} autoComplete="name" />}
+      {isSignUp && <Field label="Ім'я" name="name" required minLength={2} autoComplete="name" />}
       <Field label="Email" name="email" type="email" required autoComplete="email" />
       <Field
-        label="РџР°СЂРѕР»СЊ"
+        label="Пароль"
         name="password"
         type="password"
         required
@@ -51,17 +51,17 @@ export function AuthForm({ mode }: AuthFormProps) {
       />
       {error && <p className="text-sm text-danger">{error}</p>}
       <button className="btn-primary w-full" disabled={pending}>
-        {isSignUp ? "РЎС‚РІРѕСЂРёС‚Рё Р°РєР°СѓРЅС‚" : "РЈРІС–Р№С‚Рё"}
+        {isSignUp ? "Створити акаунт" : "Увійти"}
       </button>
       {siteConfig.isClerkEnabled && (
         <Link href="/clerk" className="btn-outline w-full">
-          РџСЂРѕРґРѕРІР¶РёС‚Рё С‡РµСЂРµР· Clerk
+          Продовжити через Clerk
         </Link>
       )}
       <p className="text-center text-sm text-muted">
-        {isSignUp ? "Р’Р¶Рµ С” Р°РєР°СѓРЅС‚? " : "РќРµРјР°С” Р°РєР°СѓРЅС‚Р°? "}
+        {isSignUp ? "Вже є акаунт? " : "Немає акаунта? "}
         <Link href={isSignUp ? "/sign-in" : "/sign-up"} className="font-medium text-brand">
-          {isSignUp ? "РЈРІС–Р№С‚Рё" : "Р—Р°СЂРµС”СЃС‚СЂСѓРІР°С‚РёСЃСЊ"}
+          {isSignUp ? "Увійти" : "Зареєструватись"}
         </Link>
       </p>
     </form>

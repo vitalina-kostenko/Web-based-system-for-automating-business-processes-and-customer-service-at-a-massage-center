@@ -22,16 +22,16 @@ export function StatusActions({ id, status, isAdmin }: StatusActionsProps) {
     <div className="flex gap-1">
       {isAdmin && status === "pending" && (
         <button className="btn-outline h-8 px-3" disabled={pending} onClick={() => change("confirmed")}>
-          РџС–РґС‚РІРµСЂРґРёС‚Рё
+          Підтвердити
         </button>
       )}
       {isAdmin && status === "confirmed" && (
         <button className="btn-outline h-8 px-3" disabled={pending} onClick={() => change("completed")}>
-          Р—Р°РІРµСЂС€РёС‚Рё
+          Завершити
         </button>
       )}
       <button className="btn-danger h-8 px-3" disabled={pending} onClick={() => change("cancelled")}>
-        РЎРєР°СЃСѓРІР°С‚Рё
+        Скасувати
       </button>
     </div>
   );

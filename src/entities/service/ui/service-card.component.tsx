@@ -21,7 +21,7 @@ export function ServiceCard({ name, description, category, durationMin, price }:
       <p className="flex-1 text-sm text-muted">{description}</p>
       <div className="flex items-center justify-between text-sm">
         <span className="flex items-center gap-1.5 text-muted">
-          <Clock className="size-4" /> {durationMin} С…РІ
+          <Clock className="size-4" /> {durationMin} хв
         </span>
         <span className="font-semibold">{formatPrice(price)}</span>
       </div>

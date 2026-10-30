@@ -16,7 +16,7 @@ export function ServiceToggle({ id, active }: ServiceToggleProps) {
       disabled={pending}
       onClick={() => startTransition(() => toggleServiceAction(id, !active))}
     >
-      {active ? "Р’РёРјРєРЅСѓС‚Рё" : "РЈРІС–РјРєРЅСѓС‚Рё"}
+      {active ? "Вимкнути" : "Увімкнути"}
     </button>
   );
 }

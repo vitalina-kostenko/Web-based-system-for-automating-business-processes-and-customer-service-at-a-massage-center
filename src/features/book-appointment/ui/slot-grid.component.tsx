@@ -11,7 +11,7 @@ type SlotGridProps = {
 // component
 export function SlotGrid({ slots, value, onChange }: SlotGridProps) {
   if (slots.length === 0) {
-    return <p className="text-sm text-muted">РќРµРјР°С” РІС–Р»СЊРЅРѕРіРѕ С‡Р°СЃСѓ РЅР° С†СЋ РґР°С‚Сѓ</p>;
+    return <p className="text-sm text-muted">Немає вільного часу на цю дату</p>;
   }
   // return
   return (

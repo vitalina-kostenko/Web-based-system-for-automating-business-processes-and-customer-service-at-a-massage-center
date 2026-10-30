@@ -40,19 +40,19 @@ export async function getSlotsAction(input: z.infer<typeof slotsSchema>) {
 export async function createAppointmentAction(input: z.infer<typeof bookingSchema>) {
   const user = await requireUser();
   const parsed = bookingSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "РќРµРєРѕСЂРµРєС‚РЅС– РґР°РЅС– Р·Р°РїРёСЃСѓ" };
+  if (!parsed.success) return { ok: false, error: "Некоректні дані запису" };
 
   const { masterId, serviceId, startsAt, notes } = parsed.data;
   const [link] = await db
     .select()
     .from(masterServices)
     .where(and(eq(masterServices.masterId, masterId), eq(masterServices.serviceId, serviceId)));
-  if (!link) return { ok: false, error: "РњР°Р№СЃС‚РµСЂ РЅРµ РЅР°РґР°С” С†СЋ РїРѕСЃР»СѓРіСѓ" };
+  if (!link) return { ok: false, error: "Майстер не надає цю послугу" };
 
   const { service, slots } = await resolveSlots(parsed.data);
   const start = new Date(startsAt);
   if (!service || !slots.some((slot) => slot.getTime() === start.getTime())) {
-    return { ok: false, error: "Р¦РµР№ С‡Р°СЃ РІР¶Рµ Р·Р°Р№РЅСЏС‚РёР№, РѕР±РµСЂС–С‚СЊ С–РЅС€РёР№" };
+    return { ok: false, error: "Цей час вже зайнятий, оберіть інший" };
   }
 
   await db.insert(appointments).values({
