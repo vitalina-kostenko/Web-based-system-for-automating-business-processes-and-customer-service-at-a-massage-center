@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --bg: #f6f8f7;
+  --surface: #ffffff;
+  --fg: #12201b;
+  --muted: #5d6f68;
+  --border: #e2e9e6;
+  --brand: #2f7d6b;
+  --brand-hover: #276a5b;
+  --soft: #e6f2ee;
+  --danger: #c2453d;
+  --warn: #b7791f;
+}
+
+.dark {
+  --bg: #0d1412;
+  --surface: #141d1a;
+  --fg: #eaf2ef;
+  --muted: #92a69e;
+  --border: #22302b;
+  --brand: #4fb89f;
+  --brand-hover: #67c9b1;
+  --soft: #183029;
+  --danger: #ef7a72;
+  --warn: #e5b45a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-soft: var(--soft);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-border bg-surface p-5 shadow-sm;
+  }
+  .btn {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 bg-brand text-white hover:bg-brand-hover dark:text-bg;
+  }
+  .btn-outline {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 border border-border bg-surface hover:bg-soft;
+  }
+  .btn-ghost {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 hover:bg-soft;
+  }
+  .btn-danger {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 text-danger hover:bg-danger/10;
+  }
+  .input {
+    @apply h-10 w-full rounded-xl border border-border bg-surface px-3 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20;
+  }
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+}
