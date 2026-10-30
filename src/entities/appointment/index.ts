@@ -1,4 +1,4 @@
-export { getFreeSlots, overlaps } from "./lib/slots.util";
+export { getFreeSlots, overlaps, type WorkWindow } from "./lib/slots.util";
 export { listAppointments, listBusyIntervals } from "./api/appointment.queries";
 export { StatusBadge } from "./ui/status-badge.component";
 export { statusLabels } from "./model/appointment.types";

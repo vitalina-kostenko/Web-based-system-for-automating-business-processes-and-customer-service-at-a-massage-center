@@ -75,6 +75,17 @@ export const masterServices = sqliteTable(
   (t) => [primaryKey({ columns: [t.masterId, t.serviceId] })],
 );
 
+export const masterSchedules = sqliteTable(
+  "master_schedules",
+  {
+    masterId: text("master_id").notNull().references(() => masters.id, { onDelete: "cascade" }),
+    weekday: integer("weekday").notNull(),
+    startMin: integer("start_min").notNull(),
+    endMin: integer("end_min").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.masterId, t.weekday] })],
+);
+
 export const appointments = sqliteTable("appointments", {
   id: text("id").primaryKey(),
   userId: text("user_id").notNull(),

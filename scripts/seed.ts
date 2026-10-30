@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { auth } from "../src/shared/lib/auth/auth.config";
-import { appointments, db, masterServices, masters, services, user } from "../src/shared/lib/db";
+import { appointments, db, masterSchedules, masterServices, masters, services, user } from "../src/shared/lib/db";
 
 const serviceData = [
   { name: "Класичний масаж спини", category: "Класичний", durationMin: 60, price: 800, description: "Глибоке розслаблення м'язів спини та шиї." },
@@ -18,6 +18,7 @@ const masterData = [
 
 async function main() {
   await db.delete(appointments);
+  await db.delete(masterSchedules);
   await db.delete(masterServices);
   await db.delete(masters);
   await db.delete(services);
@@ -28,6 +29,22 @@ async function main() {
   await db.insert(masters).values(masterRows);
   await db.insert(masterServices).values(
     masterRows.flatMap((m) => serviceRows.map((s) => ({ masterId: m.id, serviceId: s.id }))),
+  );
+
+  const shifts = [
+    { days: [1, 2, 3, 4, 5], startMin: 540, endMin: 1080 },
+    { days: [2, 3, 4, 5, 6], startMin: 600, endMin: 1200 },
+    { days: [1, 2, 3, 4, 5, 6], startMin: 540, endMin: 1020 },
+  ];
+  await db.insert(masterSchedules).values(
+    masterRows.flatMap((m, i) =>
+      shifts[i % shifts.length].days.map((weekday) => ({
+        masterId: m.id,
+        weekday,
+        startMin: shifts[i % shifts.length].startMin,
+        endMin: shifts[i % shifts.length].endMin,
+      })),
+    ),
   );
 
   const accounts = [

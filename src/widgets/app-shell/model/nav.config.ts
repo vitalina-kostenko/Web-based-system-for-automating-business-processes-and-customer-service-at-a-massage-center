@@ -1,4 +1,4 @@
-import { CalendarCheck, CalendarPlus, LayoutDashboard, Sparkles, Users, type LucideIcon } from "lucide-react";
+import { CalendarCheck, CalendarClock, CalendarPlus, LayoutDashboard, Sparkles, Users, type LucideIcon } from "lucide-react";
 
 // interface
 export type NavItem = {
@@ -14,5 +14,6 @@ export const navItems: NavItem[] = [
   { href: "/dashboard/appointments", label: "Мої записи", icon: CalendarCheck },
   { href: "/dashboard/admin/appointments", label: "Всі записи", icon: CalendarCheck, adminOnly: true },
   { href: "/dashboard/admin/services", label: "Послуги", icon: Sparkles, adminOnly: true },
+  { href: "/dashboard/admin/masters", label: "Графік", icon: CalendarClock, adminOnly: true },
   { href: "/dashboard/admin/clients", label: "Клієнти", icon: Users, adminOnly: true },
 ];
