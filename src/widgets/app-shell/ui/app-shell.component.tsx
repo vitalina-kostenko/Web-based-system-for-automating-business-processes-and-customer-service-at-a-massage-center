@@ -37,7 +37,9 @@ export function AppShell({ user, children }: AppShellProps) {
             <SignOutButton />
           </div>
         </header>
-        <main className="flex-1 p-4 pb-24 md:p-8">{children}</main>
+        <main className="flex-1 p-4 pb-24 md:p-8">
+          <div className="mx-auto w-full max-w-5xl">{children}</div>
+        </main>
       </div>
       <div className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-surface/95 p-1.5 backdrop-blur md:hidden">
         <SidebarNav isAdmin={isAdmin} variant="bottom" />

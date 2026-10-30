@@ -34,7 +34,7 @@ export async function DashboardPage() {
         stats={[
           { label: "Майбутні записи", value: upcoming.length, icon: Clock },
           { label: "Завершені візити", value: completed.length, icon: CircleCheck },
-          { label: "Всього записів", value: items.length, icon: CalendarCheck },
+          { label: "Всього записів", value: items.filter((i) => i.status !== "cancelled").length, icon: CalendarCheck },
           { label: isAdmin ? "Дохід" : "Витрачено", value: formatPrice(revenue), icon: Wallet },
         ]}
       />

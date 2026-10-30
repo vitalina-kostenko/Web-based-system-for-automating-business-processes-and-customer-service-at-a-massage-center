@@ -10,10 +10,10 @@ export async function AdminServicesPage() {
   const services = await listServices(false);
   // return
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="space-y-6">
       <h1 className="page-title">Послуги</h1>
       <ServiceForm />
-      <ul className="space-y-3">
+      <ul className="grid gap-3 md:grid-cols-2">
         {services.map((service) => (
           <li key={service.id} className="card flex items-center justify-between gap-3">
             <div>
