@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { auth } from "../src/shared/lib/auth/auth.config";
-import { appointments, db, masterSchedules, masterServices, masters, services, user } from "../src/shared/lib/db";
+import { appointments, db, masterSchedules, masterServices, masters, reviews, services, user } from "../src/shared/lib/db";
 
 const serviceData = [
   { name: "Класичний масаж спини", category: "Класичний", durationMin: 60, price: 800, description: "Глибоке розслаблення м'язів спини та шиї." },
@@ -17,6 +17,7 @@ const masterData = [
 ];
 
 async function main() {
+  await db.delete(reviews);
   await db.delete(appointments);
   await db.delete(masterSchedules);
   await db.delete(masterServices);

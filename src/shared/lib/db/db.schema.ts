@@ -12,6 +12,7 @@ export const user = sqliteTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: integer("email_verified", { mode: "boolean" }).notNull().default(false),
   image: text("image"),
+  phone: text("phone"),
   role: text("role", { enum: ["client", "admin"] }).notNull().default("client"),
   ...timestamps,
 });
@@ -100,6 +101,16 @@ export const appointments = sqliteTable("appointments", {
     .default("pending"),
   price: integer("price").notNull(),
   notes: text("notes"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const reviews = sqliteTable("reviews", {
+  id: text("id").primaryKey(),
+  appointmentId: text("appointment_id").notNull().unique().references(() => appointments.id, { onDelete: "cascade" }),
+  userId: text("user_id").notNull(),
+  masterId: text("master_id").notNull().references(() => masters.id),
+  rating: integer("rating").notNull(),
+  comment: text("comment"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
