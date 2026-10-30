@@ -3,6 +3,8 @@ import { listAppointments } from "@/entities/appointment";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { formatPrice } from "@/shared/lib/format.util";
 import { AppointmentsList } from "@/widgets/appointments-list";
+import { getUserLoyalty } from "@/entities/loyalty";
+import { LoyaltyCard } from "@/widgets/loyalty-card";
 import { NextVisit } from "@/widgets/next-visit";
 import { RevenueChart } from "@/widgets/revenue-chart";
 import { StatsGrid } from "@/widgets/stats-grid";
@@ -39,6 +41,7 @@ export async function DashboardPage() {
         ]}
       />
       {!isAdmin && <NextVisit appointment={upcoming[0]} />}
+      {!isAdmin && <LoyaltyCard loyalty={await getUserLoyalty(user.id)} />}
       {isAdmin && <RevenueChart data={days} />}
       <section className="space-y-3">
         <h2 className="font-semibold">Найближчі записи</h2>

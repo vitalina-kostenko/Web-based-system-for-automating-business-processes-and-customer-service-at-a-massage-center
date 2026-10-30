@@ -10,12 +10,13 @@ import { SlotGrid } from "./slot-grid.component";
 
 // interface
 type BookingFormProps = {
+  discountPercent?: number;
   services: { id: string; name: string; durationMin: number; price: number }[];
   masters: Record<string, { id: string; name: string; specialty: string; rating?: string }[]>;
 };
 
 // component
-export function BookingForm({ services, masters }: BookingFormProps) {
+export function BookingForm({ services, masters, discountPercent = 0 }: BookingFormProps) {
   const router = useRouter();
   const today = new Date().toISOString().slice(0, 10);
   const [serviceId, setServiceId] = useState("");
@@ -109,7 +110,7 @@ export function BookingForm({ services, masters }: BookingFormProps) {
           </section>
         )}
       </div>
-      <BookingSummary service={service} masterName={master?.name} slot={slot}>
+      <BookingSummary service={service} masterName={master?.name} slot={slot} discountPercent={discountPercent}>
         {error && <p className="text-sm text-danger">{error}</p>}
         <button className="btn-primary w-full" disabled={!slot || pending} onClick={submit}>
           Записатись

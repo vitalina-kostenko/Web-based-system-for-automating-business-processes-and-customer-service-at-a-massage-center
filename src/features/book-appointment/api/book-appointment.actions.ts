@@ -7,6 +7,7 @@ import { z } from "zod";
 import { appointments, db, masterServices, services } from "@/shared/lib/db";
 import { requireUser } from "@/shared/lib/auth/session.service";
 import { getFreeSlots, listBusyIntervals } from "@/entities/appointment";
+import { applyDiscount, getUserLoyalty } from "@/entities/loyalty";
 import { getWorkWindow } from "@/entities/master";
 
 const slotsSchema = z.object({
@@ -57,6 +58,7 @@ export async function createAppointmentAction(input: z.infer<typeof bookingSchem
     return { ok: false, error: "Цей час вже зайнятий, оберіть інший" };
   }
 
+  const { discountPercent } = await getUserLoyalty(user.id);
   await db.insert(appointments).values({
     id: randomUUID(),
     userId: user.id,
@@ -66,7 +68,8 @@ export async function createAppointmentAction(input: z.infer<typeof bookingSchem
     masterId,
     startsAt: start,
     endsAt: new Date(start.getTime() + service.durationMin * 60_000),
-    price: service.price,
+    price: applyDiscount(service.price, discountPercent),
+    discountPercent,
     notes,
   });
   revalidatePath("/dashboard", "layout");

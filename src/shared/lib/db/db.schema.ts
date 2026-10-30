@@ -104,6 +104,7 @@ export const appointments = pgTable("appointments", {
     .notNull()
     .default("pending"),
   price: integer("price").notNull(),
+  discountPercent: integer("discount_percent").notNull().default(0),
   notes: text("notes"),
   createdAt: createdAt(),
 });
