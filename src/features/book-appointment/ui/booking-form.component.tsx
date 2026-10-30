@@ -3,7 +3,8 @@
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/shared/lib/format.util";
-import { createAppointmentAction, getSlotsAction } from "../api/book-appointment.actions";
+import { createAppointmentAction, getSlotsAction, previewPromoAction } from "../api/book-appointment.actions";
+import { PromoInput } from "./promo-input.component";
 import { BookingSummary } from "./booking-summary.component";
 import { OptionList } from "./option-list.component";
 import { SlotGrid } from "./slot-grid.component";
@@ -25,6 +26,9 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
   const [slots, setSlots] = useState<string[]>([]);
   const [slot, setSlot] = useState("");
   const [notes, setNotes] = useState("");
+  const [promo, setPromo] = useState("");
+  const [promoPrice, setPromoPrice] = useState<number>();
+  const [promoError, setPromoError] = useState("");
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const service = services.find((s) => s.id === serviceId);
@@ -41,10 +45,25 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
     };
   }, [serviceId, masterId, date]);
 
+  function applyPromo() {
+    setPromoError("");
+    startTransition(async () => {
+      const result = await previewPromoAction({ code: promo, serviceId });
+      if (result.ok) setPromoPrice(result.finalPrice);
+      else {
+        setPromoPrice(undefined);
+        setPromoError(result.error ?? "Помилка");
+      }
+    });
+  }
+
   function submit() {
     setError("");
     startTransition(async () => {
-      const result = await createAppointmentAction({ serviceId, masterId, date, startsAt: slot, notes });
+      const result = await createAppointmentAction({ serviceId, masterId, date, startsAt: slot,
+        notes,
+        promoCode: promoPrice === undefined ? undefined : promo,
+      });
       if (!result.ok) return setError(result.error ?? "Помилка");
       router.push("/dashboard/appointments");
     });
@@ -60,6 +79,7 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
             value={serviceId}
             onChange={(id) => {
               setServiceId(id);
+              setPromoPrice(undefined);
               setMasterId("");
               setSlots([]);
               setSlot("");
@@ -110,7 +130,20 @@ export function BookingForm({ services, masters, discountPercent = 0 }: BookingF
           </section>
         )}
       </div>
-      <BookingSummary service={service} masterName={master?.name} slot={slot} discountPercent={discountPercent}>
+      <BookingSummary service={service} masterName={master?.name} slot={slot} discountPercent={discountPercent} finalPrice={promoPrice}>
+        {serviceId && (
+          <PromoInput
+            code={promo}
+            onCode={(value) => {
+              setPromo(value);
+              setPromoPrice(undefined);
+            }}
+            onApply={applyPromo}
+            applied={promoPrice !== undefined}
+            error={promoError}
+            disabled={pending}
+          />
+        )}
         {error && <p className="text-sm text-danger">{error}</p>}
         <button className="btn-primary w-full" disabled={!slot || pending} onClick={submit}>
           Записатись

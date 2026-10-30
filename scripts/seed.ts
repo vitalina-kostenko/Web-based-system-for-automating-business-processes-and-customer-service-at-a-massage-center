@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { auth } from "../src/shared/lib/auth/auth.config";
-import { appointments, db, masterSchedules, masterServices, masters, reviews, services, user } from "../src/shared/lib/db";
+import { appointments, db, masterSchedules, masterServices, masters, promoCodes, reviews, services, user } from "../src/shared/lib/db";
 
 const serviceData = [
   { name: "Класичний масаж спини", category: "Класичний", durationMin: 60, price: 800, description: "Глибоке розслаблення м'язів спини та шиї." },
@@ -82,6 +82,10 @@ async function main() {
       };
     }),
   );
+  await db
+    .insert(promoCodes)
+    .values({ id: randomUUID(), code: "WELCOME10", kind: "percent", value: 10, maxUses: 100 })
+    .onConflictDoNothing();
   console.log("Seed completed");
 }
 
